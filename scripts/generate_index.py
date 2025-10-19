@@ -1,13 +1,18 @@
 import requests
+import os
 from jinja2 import Template
 
-# Fetch top 10 anime from Jikan API
+# Create anime folder if not exists
+if not os.path.exists("anime"):
+    os.makedirs("anime")
+
+# Fetch top 10 anime
 url = "https://api.jikan.moe/v4/top/anime"
 res = requests.get(url).json()
 anime_list = res['data'][:10]
 
-# HTML Template
-template = Template("""
+# Index page template
+index_template = Template("""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,7 +37,7 @@ template = Template("""
 <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}">
 <h3>{{ anime.title }}</h3>
 <p>Score: {{ anime.score }}</p>
-<a href="{{ anime.url }}" target="_blank">Read More</a>
+<a href="anime/{{ anime.mal_id }}.html">Read More</a>
 </div>
 {% endfor %}
 </div>
@@ -50,9 +55,41 @@ template = Template("""
 </html>
 """)
 
-# Render HTML
-html_content = template.render(anime_list=anime_list)
-
-# Write to index.html
+# Generate index.html
 with open("index.html", "w", encoding="utf-8") as f:
-    f.write(html_content)
+    f.write(index_template.render(anime_list=anime_list))
+
+# Anime page template
+anime_template = Template("""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>{{ anime.title }}</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header>
+<h1>{{ anime.title }}</h1>
+<a href="../index.html">← Back to Home</a>
+</header>
+<main>
+<img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}">
+<p><strong>Score:</strong> {{ anime.score }}</p>
+<p><strong>Episodes:</strong> {{ anime.episodes }}</p>
+<p><strong>Type:</strong> {{ anime.type }}</p>
+<p><strong>Synopsis:</strong> {{ anime.synopsis }}</p>
+<p><a href="{{ anime.url }}" target="_blank">Official MyAnimeList Page</a></p>
+</main>
+<footer>
+&copy; 2025 It is Anime Page
+</footer>
+</body>
+</html>
+""")
+
+# Generate individual anime pages
+for anime in anime_list:
+    filename = f"anime/{anime['mal_id']}.html"
+    with open(filename, "w", encoding="utf-8") as f:
+        f.write(anime_template.render(anime=anime))
