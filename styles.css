@@ -1,9 +1,18 @@
-body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
+body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; transition: background 0.3s, color 0.3s; }
 header { background:#222; color:white; padding:20px; text-align:center; }
 header nav a { color:white; margin:0 15px; text-decoration:none; font-weight:bold; }
 main { max-width:1000px; margin:20px auto; padding:20px; background:white; box-shadow:0 0 10px rgba(0,0,0,0.1); }
 h1, h2 { color:#333; }
-.anime-card { width:200px; background:#f1f1f1; padding:10px; border-radius:8px; text-align:center; display:inline-block; margin:10px; vertical-align:top; }
+.anime-card { width:200px; background:#f1f1f1; padding:10px; border-radius:8px; text-align:center; display:inline-block; margin:10px; vertical-align:top; transition: transform 0.3s, box-shadow 0.3s; }
+.anime-card:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
 .anime-card img { width:100%; border-radius:5px; }
 footer { text-align:center; padding:15px; background:#222; color:white; margin-top:20px; }
 a { color:#1a73e8; text-decoration:none; }
+
+#filter-buttons { text-align:center; margin-bottom:20px; }
+#filter-buttons button { margin:0 5px; padding:5px 10px; cursor:pointer; border:none; border-radius:5px; background:#1a73e8; color:white; }
+#filter-buttons button:hover { background:#155ab6; }
+
+body.dark { background: #121212; color: #f0f0f0; }
+body.dark header, body.dark footer { background: #000; color: #fff; }
+body.dark .anime-card { background: #1a1a1a; }
