@@ -3,8 +3,7 @@ header { background:#222; color:white; padding:20px; text-align:center; }
 header nav a { color:white; margin:0 15px; text-decoration:none; font-weight:bold; }
 main { max-width:1000px; margin:20px auto; padding:20px; background:white; box-shadow:0 0 10px rgba(0,0,0,0.1); }
 h1, h2 { color:#333; }
-#anime-list { display:flex; flex-wrap:wrap; gap:20px; }
-.anime-card { width:200px; background:#f1f1f1; padding:10px; border-radius:8px; text-align:center; }
+.anime-card { width:200px; background:#f1f1f1; padding:10px; border-radius:8px; text-align:center; display:inline-block; margin:10px; vertical-align:top; }
 .anime-card img { width:100%; border-radius:5px; }
 footer { text-align:center; padding:15px; background:#222; color:white; margin-top:20px; }
 a { color:#1a73e8; text-decoration:none; }
