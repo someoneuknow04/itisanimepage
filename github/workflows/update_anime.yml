@@ -31,3 +31,4 @@ jobs:
         git add index.html anime/ blog/
         git commit -m "Update anime pages"
         git push
+
