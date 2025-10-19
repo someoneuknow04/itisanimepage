@@ -2,16 +2,18 @@ import requests
 import os
 from jinja2 import Template
 
-# Create anime folder if not exists
+# Create required folders
 if not os.path.exists("anime"):
     os.makedirs("anime")
+if not os.path.exists("blog"):
+    os.makedirs("blog")  # Placeholder for blog posts
 
 # Fetch top 10 anime
 url = "https://api.jikan.moe/v4/top/anime"
 res = requests.get(url).json()
 anime_list = res['data'][:10]
 
-# Index page template
+# ---------------- Index Page ----------------
 index_template = Template("""
 <!DOCTYPE html>
 <html lang="en">
@@ -24,16 +26,26 @@ index_template = Template("""
 <header>
 <h1>It is Anime Page</h1>
 <nav>
-<a href="#top-anime">Top Anime</a>
+<a href="#top-anime">Top Anime</a> |
+<a href="blog/index.html">Blog / Reviews</a> |
 <a href="#affiliate">Support Me</a>
 </nav>
+<button onclick="document.body.classList.toggle('dark')">Toggle Dark Mode</button>
 </header>
+
 <main>
 <section id="top-anime">
 <h2>Top Anime Right Now</h2>
+<div id="filter-buttons">
+<button onclick="filterType('All')">All</button>
+<button onclick="filterType('TV')">TV</button>
+<button onclick="filterType('Movie')">Movie</button>
+<button onclick="filterType('OVA')">OVA</button>
+<button onclick="filterType('ONA')">ONA</button>
+</div>
 <div>
 {% for anime in anime_list %}
-<div class="anime-card">
+<div class="anime-card" data-type="{{ anime.type }}">
 <img src="{{ anime.images.jpg.image_url }}" alt="{{ anime.title }}">
 <h3>{{ anime.title }}</h3>
 <p>Score: {{ anime.score }}</p>
@@ -42,24 +54,38 @@ index_template = Template("""
 {% endfor %}
 </div>
 </section>
+
 <section id="affiliate">
 <h2>Support This Site</h2>
 <p><a href="https://www.buymeacoffee.com/">Buy Me a Coffee</a></p>
 <p><a href="YOUR-AFFILIATE-LINK">Shop Anime Merch</a></p>
 </section>
 </main>
+
 <footer>
 &copy; 2025 It is Anime Page
 </footer>
+
+<script>
+function filterType(type) {
+    const cards = document.querySelectorAll('.anime-card');
+    cards.forEach(card => {
+        if(type === 'All' || card.dataset.type === type){
+            card.style.display = 'inline-block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 </body>
 </html>
 """)
 
-# Generate index.html
 with open("index.html", "w", encoding="utf-8") as f:
     f.write(index_template.render(anime_list=anime_list))
 
-# Anime page template
+# ---------------- Anime Pages ----------------
 anime_template = Template("""
 <!DOCTYPE html>
 <html lang="en">
@@ -78,6 +104,13 @@ anime_template = Template("""
 <p><strong>Score:</strong> {{ anime.score }}</p>
 <p><strong>Episodes:</strong> {{ anime.episodes }}</p>
 <p><strong>Type:</strong> {{ anime.type }}</p>
+<p><strong>Genres:</strong> {% for genre in anime.genres %}{{ genre.name }} {% endfor %}</p>
+<p><strong>Studios:</strong> {% for studio in anime.studios %}{{ studio.name }} {% endfor %}</p>
+<p><strong>Rating:</strong> {{ anime.rating }}</p>
+<p><strong>Aired:</strong> {{ anime.aired.string }}</p>
+{% if anime.trailer and anime.trailer.youtube_id %}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/{{ anime.trailer.youtube_id }}" frameborder="0" allowfullscreen></iframe>
+{% endif %}
 <p><strong>Synopsis:</strong> {{ anime.synopsis }}</p>
 <p><a href="{{ anime.url }}" target="_blank">Official MyAnimeList Page</a></p>
 </main>
@@ -88,8 +121,34 @@ anime_template = Template("""
 </html>
 """)
 
-# Generate individual anime pages
 for anime in anime_list:
     filename = f"anime/{anime['mal_id']}.html"
     with open(filename, "w", encoding="utf-8") as f:
         f.write(anime_template.render(anime=anime))
+
+# ---------------- Blog Placeholder ----------------
+blog_index = Template("""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Anime Blog / Reviews</title>
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header>
+<h1>Anime Blog / Reviews</h1>
+<a href="../index.html">← Back to Home</a>
+</header>
+<main>
+<p>This is a placeholder for blog posts. You can add individual HTML files here in the future.</p>
+</main>
+<footer>
+&copy; 2025 It is Anime Page
+</footer>
+</body>
+</html>
+""")
+
+with open("blog/index.html", "w", encoding="utf-8") as f:
+    f.write(blog_index.render())
